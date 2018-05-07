@@ -40,7 +40,8 @@ class PracticeTestFragment : Fragment() {
         // Method for creating new instances of the fragment
         fun newInstance(recognitionSpeech: SpeechData): PracticeTestFragment {
 
-            Log.i(TAG,"fun newInstance(recognitionSpeech: SpeechData): PracticeTestFragment {")
+            Log.i(TAG,"fun newInstance(recognitionSpeech: SpeechData): PracticeTestFragment")
+
             // Store the movie data in a Bundle object
             val args = Bundle()
             args.putString(AppConstants.TEXT_SAMPLE, recognitionSpeech.inputSpeech)
