@@ -9,11 +9,11 @@ import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import com.ntt.groupfour.englishflex.feature.R
-import com.ntt.groupfour.englishflex.feature.customview.PracticeContainerLayout
+import com.ntt.groupfour.englishflex.feature.customview.SpeechContainerLayout
 
 class MainActivity : AppCompatActivity() {
     val TAG = "MainAct"
-    lateinit var practiveReg: PracticeContainerLayout
+    lateinit var practiveReg: SpeechContainerLayout
     lateinit var buttonStart: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,7 +25,6 @@ class MainActivity : AppCompatActivity() {
 
 
         this.buttonStart = findViewById(R.id.buttonStart)
-
         this.buttonStart.setOnClickListener(View.OnClickListener {
             checkPermisionOS()
         })
@@ -33,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    // NTT Activity contain Speech Recogniton
     private val REQUEST_RECORD_PERMISSION = 100
     private fun checkPermisionOS() {
         ActivityCompat.requestPermissions(this@MainActivity,
@@ -57,4 +57,5 @@ class MainActivity : AppCompatActivity() {
         this.practiveReg.destroyServiceRecognition()  // TODO NTT change to stop???
         Log.i(TAG, "onStop() destroy");
     }
+    // \NTT Activity contain Speech Recogniton
 }

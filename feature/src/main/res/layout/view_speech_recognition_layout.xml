@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/textInput"
+        android:id="@+id/textInputSpeech"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/marginTexbox_5dp"
@@ -14,20 +15,20 @@
         android:textAlignment="center"
         android:textColor="@color/colorSecondary"
         android:textSize="@dimen/textViewInputReadSize"
-        android:textStyle="bold"
-     />
+        android:textStyle="bold" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@android:color/transparent" />
+    <!--<View-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="50dp"-->
+    <!--android:background="@android:color/transparent" />-->
 
     <TextView
-        android:id="@+id/textResult"
+        android:id="@+id/textOutputSpeech"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/marginTexbox_5dp"
         android:text="@string/app_name"
-        android:textSize="@dimen/textViewRecognitionSize" />
+        android:textSize="@dimen/textViewRecognitionSize"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

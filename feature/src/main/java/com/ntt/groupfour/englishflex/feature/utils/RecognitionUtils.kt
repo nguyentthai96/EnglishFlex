@@ -2,9 +2,13 @@ package com.ntt.groupfour.englishflex.feature.utils
 
 import android.os.Bundle
 import android.speech.SpeechRecognizer
-import java.util.ArrayList
+import android.util.Log
+import java.util.*
 
 object RecognitionUtils {
+
+    val TAG = "RecognitionUt"
+
     fun getErrorText(errorCode: Int): String {
         val message: String
         when (errorCode) {
@@ -23,6 +27,8 @@ object RecognitionUtils {
     }
 
     fun getArrayStringResult(results: Bundle?): ArrayList<String>? {
-        return results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+        val data = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+        Log.d(TAG, "getArrayStringResult(results: Bundle?) ::: " + data)
+        return data
     }
 }

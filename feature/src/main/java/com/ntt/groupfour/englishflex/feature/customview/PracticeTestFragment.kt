@@ -8,39 +8,39 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.ntt.groupfour.englishflex.feature.R
-import com.ntt.groupfour.englishflex.feature.model.RecognitionSpeech
 import com.ntt.groupfour.englishflex.feature.model.SpeechData
 import com.ntt.groupfour.englishflex.feature.utils.AppConstants
 
 class PracticeTestFragment : Fragment() {
 
-    val TAG="PracticeTF"
-    private lateinit var textInput: TextView
-    private lateinit var textResult: TextView
+    val TAG = "PracticeTF"
+    protected lateinit var textInput: TextView
+    protected lateinit var textResult: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Creates the view controlled by the fragment
-        val view = inflater.inflate(R.layout.view_text_recognition_layout, container, false)
-        this.textInput = view!!.findViewById<TextView>(R.id.textInput)
-        this.textResult = view.findViewById<TextView>(R.id.textResult)
+        val view = inflater.inflate(R.layout.view_speech_recognition_layout, container, false)
+        this.textInput = view!!.findViewById<TextView>(R.id.textInputSpeech)
+        this.textResult = view.findViewById<TextView>(R.id.textOutputSpeech)
 
         val args = arguments
         this.textInput.text = args?.getString(AppConstants.TEXT_SAMPLE)
 
+        Log.i(TAG, "override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?)")
 
         return view;
     }
 
-    fun callBackSetRecognitionResult(text: String) {
-        this.textResult.setText(text)
+    fun updateText(){
+        this.textResult.setText("sdsdfg")
+        Log.i(TAG, "fun updateText(){")
     }
 
     companion object {
-        val TAG="PracticeTF"
+        val TAG = "PracticeTF"
         // Method for creating new instances of the fragment
         fun newInstance(recognitionSpeech: SpeechData): PracticeTestFragment {
-
-            Log.i(TAG,"fun newInstance(recognitionSpeech: SpeechData): PracticeTestFragment")
+            Log.i(TAG, "fun newInstance(recognitionSpeech: SpeechData): PracticeTestFragment")
 
             // Store the movie data in a Bundle object
             val args = Bundle()

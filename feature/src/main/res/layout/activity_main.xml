@@ -7,13 +7,13 @@
     tools:context=".activity.MainActivity">
 
 
-    <com.ntt.groupfour.englishflex.feature.customview.PracticeContainerLayout
+    <com.ntt.groupfour.englishflex.feature.customview.SpeechContainerLayout
         android:id="@+id/practiveReg"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:background="@android:color/darker_gray">
 
-    </com.ntt.groupfour.englishflex.feature.customview.PracticeContainerLayout>
+    </com.ntt.groupfour.englishflex.feature.customview.SpeechContainerLayout>
 
     <Button
         android:id="@+id/buttonStart"
