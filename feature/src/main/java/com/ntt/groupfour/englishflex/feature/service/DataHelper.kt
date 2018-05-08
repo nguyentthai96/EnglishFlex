@@ -6,7 +6,7 @@ import kotlin.collections.ArrayList
 
 class DataHelper {
 
-    fun getDataListString(): ArrayList<String>? {
+    private fun getDataListString(): ArrayList<String>? {
         return arrayListOf(
                 "We frequently create classes whose main purpose is to hold data.",
                 "In such a class some standard functionality and utility",
