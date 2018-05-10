@@ -6,20 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".activity.MainActivity">
 
-
-    <com.ntt.groupfour.englishflex.feature.customview.SpeechContainerLayout
-        android:id="@+id/practiveReg"
+    <com.ntt.groupfour.englishflex.feature.customview.PracticeSetupLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:background="@android:color/darker_gray">
+        android:layout_height="match_parent"
+        android:id="@+id/practiceSetupLayout"
+        android:visibility="visible">
 
-    </com.ntt.groupfour.englishflex.feature.customview.SpeechContainerLayout>
+    </com.ntt.groupfour.englishflex.feature.customview.PracticeSetupLayout>
 
-    <Button
-        android:id="@+id/buttonStart"
+    <com.ntt.groupfour.englishflex.feature.customview.PracticeRecognitionLayout
+        android:id="@+id/practicesRecoginition"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Start"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
+        android:layout_height="match_parent"
+        android:background="@android:color/darker_gray"
+        android:visibility="invisible"
+        />
 </android.support.constraint.ConstraintLayout>

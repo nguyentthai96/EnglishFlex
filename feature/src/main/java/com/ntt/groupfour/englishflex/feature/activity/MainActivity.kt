@@ -6,64 +6,51 @@ import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.Toast
 import com.ntt.groupfour.englishflex.feature.R
-import com.ntt.groupfour.englishflex.feature.callback.TimerCallback
-import com.ntt.groupfour.englishflex.feature.customview.SpeechContainerLayout
-import com.ntt.groupfour.englishflex.feature.model.SpeechData
-import com.ntt.groupfour.englishflex.feature.service.DataHelper
+import com.ntt.groupfour.englishflex.feature.callback.LayoutCallback
+import com.ntt.groupfour.englishflex.feature.customview.PracticeRecognitionLayout
+import com.ntt.groupfour.englishflex.feature.customview.PracticeSetupLayout
+import kotlinx.android.synthetic.main.recognition_practices_layout.*
 
-class MainActivity : AppCompatActivity(), TimerCallback {
-
+class MainActivity : AppCompatActivity(), LayoutCallback {
 
     val TAG = "MainAct"
-    lateinit var speechContainerLayout: SpeechContainerLayout
-    lateinit var buttonStart: Button
+    lateinit var practicesRecoginition: PracticeRecognitionLayout
+    lateinit var practiceSetupLayout: PracticeSetupLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        this.speechContainerLayout = findViewById(R.id.practiveReg)
-        this.speechContainerLayout.createViewUIAndConfig()
-        this.speechContainerLayout.setOnTimerCallback(this)
+        this.practiceSetupLayout = findViewById(R.id.practiceSetupLayout)
+        this.practiceSetupLayout.visibility = View.VISIBLE
+        this.practiceSetupLayout.setOnStartCallback(this)
 
-        this.buttonStart = findViewById(R.id.buttonStart)
-        this.buttonStart.setOnClickListener(View.OnClickListener {
-            //            requestkPermisionOS()
-//            speechContainerLayout.startPracticeTest()
-            addNextPractice()
-        })
-
+        this.practicesRecoginition = findViewById(R.id.practicesRecoginition)
+        this.practicesRecoginition.visibility = View.GONE
+        this.practicesRecoginition.setOnStartCallback(this)
     }
 
-    private var indexPracticeCurrent = 0
-    private var dataPractice: ArrayList<SpeechData> = DataHelper().getSpeechData(); // get from singleton
-
-    // return null if current last item
-    private fun getNextPractice(): SpeechData? {
-        if (indexPracticeCurrent < dataPractice.size - 1) {
-            this.indexPracticeCurrent++;
-            return this.dataPractice[indexPracticeCurrent]
-        }
-        return null
+    override fun onStartCallback() {
+        requestPermisionOS()
     }
 
-    fun addNextPractice() {
-        try {
-            this.speechContainerLayout.updateDataView(this.getNextPractice()!!)  // throw KotlinNullPointerException when null
-            this.speechContainerLayout.startPracticeTest()
-        } catch (nullEx: KotlinNullPointerException) {
-            Log.e(TAG, "Error catch :: $nullEx")
-        }
+    fun permissionAllow() {
+        this.practiceSetupLayout.visibility = View.GONE
+        this.practicesRecoginition.visibility = View.VISIBLE
+        this.practicesRecoginition.createViewUIAndConfig()
+        this.practicesRecoginition.reshowSettingView()
     }
 
+    fun permissionDenice() {
+        Toast.makeText(this@MainActivity, "Permission Denied!", Toast.LENGTH_SHORT).show()
+    }
 
     // NTT Activity contain Speech Recogniton
     private val REQUEST_RECORD_PERMISSION = 100
 
-    private fun requestkPermisionOS() {
+    private fun requestPermisionOS() {
         ActivityCompat.requestPermissions(this@MainActivity,
                 arrayOf(android.Manifest.permission.RECORD_AUDIO),
                 REQUEST_RECORD_PERMISSION)
@@ -74,26 +61,18 @@ class MainActivity : AppCompatActivity(), TimerCallback {
 
         when (requestCode) {
             REQUEST_RECORD_PERMISSION -> if (grantResults.size > 0 && grantResults[0] === PackageManager.PERMISSION_GRANTED) {
-                this.speechContainerLayout.startPracticeTest()
+                this.permissionAllow()
             } else {
-                Toast.makeText(this@MainActivity, "Permission Denied!", Toast.LENGTH_SHORT).show()
+                this.permissionDenice()
             }
         }
     }
 
     override fun onStop() {
         super.onStop()
-        this.speechContainerLayout.destroyServiceRecognition()  // TODO NTT change to stop???
+        this.practicesRecoginition.stopActivity()
+//        this.speechContainerLayout.destroyServiceRecognition()  // TODO NTT change to stop???
         Log.i(TAG, "onStop() destroy");
     }
-    // \NTT Activity contain Speech Recogniton
-
-
-    override fun startTimerCount(time: Long) {
-
-    }
-
-    override fun updateNextPracticeViewCallback() {
-        addNextPractice()
-    }
+// \NTT Activity contain Speech Recogniton
 }

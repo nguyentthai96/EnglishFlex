@@ -13,9 +13,13 @@ class RecognitionSpeech {
         this.textRecognition = textRecognitionOut
         for (word in textInputRecognition.split(' ')) {
             var textCompare = textRecognitionOut.toUpperCase();
-            if (textCompare.contains(word)) {
+            if (textCompare.contains(word.toUpperCase())) {
                 this.score++;
             }
         }
+    }
+
+    override fun toString(): String {
+        return "RecognitionSpeech(textRecognition='$textRecognition', score=$score)"
     }
 }

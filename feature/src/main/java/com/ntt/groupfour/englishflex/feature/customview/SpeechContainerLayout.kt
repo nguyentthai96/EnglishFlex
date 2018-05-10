@@ -13,8 +13,9 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.ntt.groupfour.englishflex.feature.R
-import com.ntt.groupfour.englishflex.feature.callback.TimerCallback
+import com.ntt.groupfour.englishflex.feature.callback.PracticeActionCallback
 import com.ntt.groupfour.englishflex.feature.model.SpeechData
+import com.ntt.groupfour.englishflex.feature.utils.AppConstants
 import com.ntt.groupfour.englishflex.feature.utils.RecognitionUtils
 
 class SpeechContainerLayout : FrameLayout, RecognitionListener {
@@ -26,22 +27,20 @@ class SpeechContainerLayout : FrameLayout, RecognitionListener {
     private lateinit var textInputSpeech: TextView
     private lateinit var textOutputSpeech: TextView
 
-    private lateinit var timerCallback: TimerCallback
+    private lateinit var practiceActionCallback: PracticeActionCallback
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
         LayoutInflater.from(context).inflate(R.layout.view_speech_recognition_layout, this)
-    }
 
-    fun createViewUIAndConfig() {
-//        val view= View.inflate(context, R.layout.container_multi_practice_layout, (rootView as FrameLayout).findViewById(R.id.containerLayout))
+        //        val view= View.inflate(context, R.layout.recognition_practices_layout, (rootView as FrameLayout).findViewById(R.id.containerLayout))
         this.textInputSpeech = findViewById(R.id.textInputSpeech)
         this.textOutputSpeech = findViewById(R.id.textOutputSpeech)
 
-        configRecognitionSpeech()
+        this.configRecognitionSpeech()
     }
 
-    fun setOnTimerCallback(timerCallback: TimerCallback) {
-        this.timerCallback = timerCallback
+    fun setOnTimerCallback(practiceActionCallback: PracticeActionCallback) {
+        this.practiceActionCallback = practiceActionCallback
     }
 
     fun updateDataView(data: SpeechData) {
@@ -51,23 +50,44 @@ class SpeechContainerLayout : FrameLayout, RecognitionListener {
         this.textOutputSpeech.setText("")
     }
 
+    fun reviewDataPracticeView(data: SpeechData) {
+        this.dataPractice = data
+        Log.i(TAG, dataPractice.toString())
+        this.textInputSpeech.setText(this.dataPractice.inputSpeech)
+        this.textOutputSpeech.setText(data.getBestResult()?.textRecognition)
+    }
+
     fun configRecognitionSpeech() {
         setIntenRecognitonSpeech()
     }
 
+    // check stop service and start
     fun startPracticeTest() {
         if (this.speech != null) {
             stopPracticeTest()
         }
         startServiceRecognition()
+        this.textOutputSpeech.text = null
+        this.practiceActionCallback.startTimerCount((dataPractice.time - AppConstants.TIME_COUNTDOWN) * 1000L)
         Log.i(TAG, "startPracticeTest  start");
     }
+
+    fun restartPracticeTest() {
+        // NTT TODO no code
+        if (this.speech != null) {
+            stopPracticeTest()
+        }
+        startServiceRecognition()
+        Log.i(TAG, "restartPracticeTest  restart");
+    }
+
 
     fun stopPracticeTest() {
         this.stopServiceRecognition()
         Log.i(TAG, "stopPracticeTest  start");
     }
 
+    // check null speech service and start
     private fun startServiceRecognition() {
         if (this.speech != null) {
             speech?.startListening(recognizerIntent)
@@ -90,23 +110,6 @@ class SpeechContainerLayout : FrameLayout, RecognitionListener {
 
             Log.i(TAG, "stopRecognitionListening  stop");
         }
-    }
-
-
-    fun integratedCountDownTimer(time: Long) {
-        val COUNT_DOWN_INTERVAL = 500L
-
-        var a = object : CountDownTimer(time, COUNT_DOWN_INTERVAL) {
-            var curentTime = time
-
-            override fun onTick(millisUntilFinished: Long) {
-                curentTime = curentTime - COUNT_DOWN_INTERVAL
-            }
-
-            override fun onFinish() {
-
-            }
-        }.start()
     }
 
 
@@ -142,8 +145,8 @@ class SpeechContainerLayout : FrameLayout, RecognitionListener {
     //
     override fun onReadyForSpeech(params: Bundle?) {
         Log.i(TAG, "onReadyForSpeech after setIntenRecognitonSpeech");
+        practiceActionCallback.showProgressBarRecognition()
         // NTT TODO record service start...
-        this.integratedCountDownTimer(((this.dataPractice.time - 3) * 1000).toLong())
     }
 
     override fun onBeginningOfSpeech() {
@@ -160,28 +163,48 @@ class SpeechContainerLayout : FrameLayout, RecognitionListener {
     override fun onError(error: Int) {
         val errorMessage = RecognitionUtils.getErrorText(error)
         Log.e(TAG, "onError runtime, not error code FAILED ::: $errorMessage")
-
+        practiceActionCallback.showMicRecognition()
         // TODO NTT case, current not handle
         if (error == SpeechRecognizer.ERROR_NO_MATCH) {
-            Thread.sleep(100)
-            this.destroyServiceRecognition()
+            this.stopServiceRecognition()
             this.configRecognitionSpeech()
-            this.startPracticeTest()
+            this.restartPracticeTest()
             // \TODO NTT case, current not handle
 
         }
     }
 
     override fun onResults(results: Bundle?) {
-        Log.i(TAG, "onResults")
         val matches = RecognitionUtils.getArrayStringResult(results);
-        Log.i(TAG, "onResults :::: " + matches)
-        this.textOutputSpeech.setText(matches.toString())
+        Log.i(TAG, "onResults ::: ${matches.toString()}")
 
         this.stopServiceRecognition()
-        Thread.sleep(500)
-        timerCallback.updateNextPracticeViewCallback()
+
+        if (matches != null) {
+            val bestResult = dataPractice.addRecognizeResponseBest(matches)
+            this.textOutputSpeech.text = bestResult
+
+            if (bestResult.toUpperCase().equals(dataPractice.inputSpeech.toUpperCase())) {
+                correctedText(bestResult)
+            }
+        } else {
+            this.startServiceRecognition()
+        }
     }
 
     // \
+
+    fun correctedText(results: String) {
+        val TIME_DELAY_VIEW_RESULT = 500L
+
+        object : CountDownTimer(TIME_DELAY_VIEW_RESULT, TIME_DELAY_VIEW_RESULT) {
+
+            override fun onTick(millisUntilFinished: Long) {
+            }
+
+            override fun onFinish() {
+                practiceActionCallback.updateNextPracticeViewCallback()
+            }
+        }.start()
+    }
 }

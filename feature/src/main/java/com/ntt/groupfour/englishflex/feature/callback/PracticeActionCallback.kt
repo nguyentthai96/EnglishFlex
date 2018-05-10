@@ -1,6 +1,8 @@
 package com.ntt.groupfour.englishflex.feature.callback
 
-interface TimerCallback {
+interface PracticeActionCallback {
     fun startTimerCount(time:Long)
     fun updateNextPracticeViewCallback()
+    fun showMicRecognition()
+    fun showProgressBarRecognition()
 }

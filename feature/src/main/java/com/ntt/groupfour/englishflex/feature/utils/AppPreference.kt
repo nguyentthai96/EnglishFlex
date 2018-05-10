@@ -1,7 +1,10 @@
 package com.ntt.groupfour.englishflex.feature.utils
 
+import android.util.Log
+
 class AppPreference protected constructor() {
 
+    val TAG ="AppPrefe"
     @Volatile
     private var INSTANCE: AppPreference? = null
 
@@ -11,6 +14,7 @@ class AppPreference protected constructor() {
     //  level 1.5 Hardly
     //  level 2 Very Hardly
     var appCurrentLevel: Float = AppConstants.LEVEL_NORMAL
+    //
     var timePracticeTest: Int = 0
 
     init {
@@ -44,8 +48,18 @@ class AppPreference protected constructor() {
         return this.appCurrentLevel
     }
 
+    fun setTimerPractive(timer:Int) {
+        this.timePracticeTest = timer
+    }
+
+    fun getCurrentTimerPractive(): Int {
+        return this.timePracticeTest
+    }
+
+    // time practice sample real
     fun getNumberWordPracticeTest(): Int{
         var timeRead =  this.timePracticeTest*AppConstants.PER_TIME_OF_WORD;
+        Log.d(TAG, "getNumberWordPracticeTest time:: $timeRead timeSelect::: ${this.timePracticeTest}")
         return timeRead + (timeRead*AppConstants.TIME_RESERVE ).toInt()
     }
 }

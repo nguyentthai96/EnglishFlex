@@ -1,36 +1,51 @@
 package com.ntt.groupfour.englishflex.feature.model
 
 import com.ntt.groupfour.englishflex.feature.utils.AppConstants
-import java.util.*
 
 class SpeechData {
 
     var inputSpeech: String = ""
     // time speech record data, count down
     var time: Int = 0;
-    lateinit var recognitionSpeechs: ArrayList<RecognitionSpeech>
+    // current addRecognizeResponseBest for new state score
+    var scoreCurrent: Int = 0
+    var recognitionSpeechs: ArrayList<RecognitionSpeech>
 
     constructor(inputSpeech: String) {
         this.inputSpeech = inputSpeech
         this.time = calculateTimeReadInput()
+        this.recognitionSpeechs = ArrayList()
     }
 
     private fun calculateTimeReadInput(): Int {
         var numberWord = this.inputSpeech.split(' ').size;
-        return numberWord * AppConstants.PER_TIME_OF_WORD
+        val timeReal = numberWord * AppConstants.PER_TIME_OF_WORD
+        return timeReal + (timeReal * AppConstants.TIME_RESERVE).toInt()
     }
 
-    fun addRecognizeResult(resultRecognitions: ArrayList<String>) {
+    // add state response return best text math
+    fun addRecognizeResponseBest(resultRecognitions: ArrayList<String>): String {
+        var newRecogn: ArrayList<RecognitionSpeech> = ArrayList()
+
         for (item in resultRecognitions) {
-            this.recognitionSpeechs.add(RecognitionSpeech(this.inputSpeech, item))
+            newRecogn.add(RecognitionSpeech(this.inputSpeech, item))
         }
+        this.recognitionSpeechs.addAll(newRecogn)
+        val bestItem = getBestResult(newRecogn)
+        this.scoreCurrent = bestItem?.score ?: 0
+        return bestItem?.textRecognition ?: "NULL-NOT_MATCH"  // TODO NTT return item max score
     }
 
-    fun getTextResultRecognize() {
+    fun getBestResult(recognitionSpeechs: ArrayList<RecognitionSpeech>): RecognitionSpeech? {
+        return recognitionSpeechs.maxBy { item -> item.score }
+    }
+
+    fun getBestResult(): RecognitionSpeech? {
+        return getBestResult(this.recognitionSpeechs)
     }
 
     override fun toString(): String {
-        return "SpeechData(inputSpeech='$inputSpeech', time=$time)"
+        return "\nSpeechData(inputSpeech='$inputSpeech', time=$time) \ninside:: $recognitionSpeechs"
     }
 
 
