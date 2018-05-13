@@ -1,10 +1,12 @@
 package com.ntt.groupfour.englishflex.feature.utils
 
+import android.app.Activity
+import android.net.Uri
 import android.util.Log
 
 class AppPreference protected constructor() {
 
-    val TAG ="AppPrefe"
+    val TAG = "AppPrefe"
     @Volatile
     private var INSTANCE: AppPreference? = null
 
@@ -16,6 +18,11 @@ class AppPreference protected constructor() {
     var appCurrentLevel: Float = AppConstants.LEVEL_NORMAL
     //
     var timePracticeTest: Int = 0
+
+    lateinit var activityCurrentName: String
+    lateinit var activityCurrent: Activity
+
+    lateinit var fileUri: Uri
 
     init {
     }
@@ -48,7 +55,7 @@ class AppPreference protected constructor() {
         return this.appCurrentLevel
     }
 
-    fun setTimerPractive(timer:Int) {
+    fun setTimerPractive(timer: Int) {
         this.timePracticeTest = timer
     }
 
@@ -57,9 +64,18 @@ class AppPreference protected constructor() {
     }
 
     // time practice sample real
-    fun getNumberWordPracticeTest(): Int{
-        var timeRead =  this.timePracticeTest*AppConstants.PER_TIME_OF_WORD;
+    fun getNumberWordPracticeTest(): Int {
+        var timeRead = this.timePracticeTest * AppConstants.PER_TIME_OF_WORD;
         Log.d(TAG, "getNumberWordPracticeTest time:: $timeRead timeSelect::: ${this.timePracticeTest}")
-        return timeRead + (timeRead*AppConstants.TIME_RESERVE ).toInt()
+        return timeRead + (timeRead * AppConstants.TIME_RESERVE).toInt()
+    }
+
+    fun setActivityCurrent(activity:Activity, name:String){
+        this.activityCurrent=activity
+        this.activityCurrentName=name
+    }
+
+    fun getFileUriData():Uri{
+        return this.fileUri
     }
 }

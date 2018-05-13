@@ -251,6 +251,13 @@ class PracticeRecognitionLayout : FrameLayout, PracticeActionCallback {
         if (this.speechRecognitonContainer != null) {
             this.speechRecognitonContainer.stopPracticeTest()
         }
-        this.handlerTimer.removeCallbacks(this.runnable)
+        try {
+            if (this.handlerTimer != null && null != this.runnable) {
+                this.handlerTimer?.removeCallbacks(this.runnable)
+            }
+        } catch (e: UninitializedPropertyAccessException) {
+            Log.d(TAG, "Error catch exception  :: $e")
+        }
+
     }
 }

@@ -3,5 +3,7 @@
     <dimen name="textViewInputReadSize">16sp</dimen>
     <dimen name="marginTexbox_5dp">5dp</dimen>
     <dimen name="textViewRecognitionSize">16sp</dimen>
+    <dimen name="popup_width">350dp</dimen>
+    <dimen name="popup_height">500dp</dimen>
 
 </resources>

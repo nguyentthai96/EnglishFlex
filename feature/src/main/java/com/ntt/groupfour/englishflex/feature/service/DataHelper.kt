@@ -1,14 +1,31 @@
 package com.ntt.groupfour.englishflex.feature.service
 
+import android.util.Log
 import com.ntt.groupfour.englishflex.feature.model.SpeechData
+import com.ntt.groupfour.englishflex.feature.utils.AppPreference
 
 class DataHelper {
 
+    val TAG="DataHelper"
+
     private fun getDataListString(): ArrayList<String>? {
-        return arrayListOf(
-                "My name",
-                "what's your name"
-        )
+        val datas = FileStoreService().readTextFile(AppPreference.getInstance()!!.getFileUriData()).toString()
+        Log.d(TAG, "Data load form file $datas")
+        var result: ArrayList<String> = ArrayList()
+        for (item in datas.split('\n')) {
+            result.add(item.toString())
+        }
+
+        return result
+//        return arrayListOf(
+//                "About when?",
+//                "what's your name",
+//                "Add fuel to the fire.",
+//                "Hell with haggling",
+//                "Is that so",
+//                "Love me love my dog",
+//                "What the hell is going on?"
+//        )
     }
 
 

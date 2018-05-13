@@ -1,21 +1,33 @@
 package com.ntt.groupfour.englishflex.feature.activity
 
+import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import com.ntt.groupfour.englishflex.feature.R
 import com.ntt.groupfour.englishflex.feature.callback.LayoutCallback
+import com.ntt.groupfour.englishflex.feature.customview.DialogCustoms
 import com.ntt.groupfour.englishflex.feature.customview.PracticeRecognitionLayout
 import com.ntt.groupfour.englishflex.feature.customview.PracticeSetupLayout
+import com.ntt.groupfour.englishflex.feature.utils.AppPreference
 import kotlinx.android.synthetic.main.recognition_practices_layout.*
 
-class MainActivity : AppCompatActivity(), LayoutCallback {
+class MainActivity : AppCompatActivity(), LayoutCallback, DialogCustoms.OnCallBack {
 
     val TAG = "MainAct"
+
+    companion object {
+        val REQUEST_CODE = 341
+    }
+
     lateinit var practicesRecoginition: PracticeRecognitionLayout
     lateinit var practiceSetupLayout: PracticeSetupLayout
 
@@ -30,6 +42,8 @@ class MainActivity : AppCompatActivity(), LayoutCallback {
         this.practicesRecoginition = findViewById(R.id.practicesRecoginition)
         this.practicesRecoginition.visibility = View.GONE
         this.practicesRecoginition.setOnStartCallback(this)
+
+        AppPreference.getInstance()?.setActivityCurrent(this, TAG)
     }
 
     override fun onStartCallback() {
@@ -75,4 +89,52 @@ class MainActivity : AppCompatActivity(), LayoutCallback {
         Log.i(TAG, "onStop() destroy");
     }
 // \NTT Activity contain Speech Recogniton
+
+    // Menu
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.menu_actionbar, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.import_data ->{
+                showDialogLoadData()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    var diag : DialogCustoms=DialogCustoms.newInstance(2)
+    fun  showDialogLoadData(){
+        diag.setOnCallBack(this)
+        diag.show(fragmentManager,"DialogImportData")
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        Log.d(TAG, "onActivityResult ")
+
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            var uri: Uri = data!!.data
+
+            AppPreference.getInstance()?.fileUri = uri
+            Log.d(TAG, "onActivityResult open file :: uri $uri")
+        }
+    }
+
+    fun startSearchFileChoose() {
+        val intent: Intent = Intent(Intent.ACTION_GET_CONTENT)  // ACTION_OPEN_DOCUMENT   ACTION_OPEN_DOCUMENT_TREE
+        intent.type = "*/*"
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        startActivityForResult(intent, REQUEST_CODE)
+    }
+
+    override fun onClickButtonChooseFile() {
+        this.startSearchFileChoose()
+        this.diag.dismiss()
+    }
+    // \Menu
 }
